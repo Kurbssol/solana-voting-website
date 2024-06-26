@@ -17,13 +17,19 @@ $apiUrl = "https://api.dexscreener.com/latest/dex/tokens/$contractAddress";
 $apiResponse = file_get_contents($apiUrl);
 $tokenData = json_decode($apiResponse, true);
 
-if ($tokenData && isset($tokenData['pair'])) {
-    $tokenName = $conn->real_escape_string($tokenData['pair']['baseToken']['name']);
-    $tokenSymbol = $conn->real_escape_string($tokenData['pair']['baseToken']['symbol']);
-    $tokenPrice = $tokenData['pair']['priceNative'];
+if ($tokenData && isset($tokenData['pairs'][0])) {
+    $tokenName = $conn->real_escape_string($tokenData['pairs'][0]['baseToken']['name']);
+    $tokenSymbol = $conn->real_escape_string($tokenData['pairs'][0]['baseToken']['symbol']);
+    $tokenPrice = $tokenData['pairs'][0]['priceNative'];
 
     $sql = "INSERT INTO coins (name, contract_address, symbol, price) VALUES ('$tokenName', '$contractAddress', '$tokenSymbol', '$tokenPrice')";
-    $conn->query($sql);
+    if ($conn->query($sql) === TRUE) {
+        echo json_encode(['status' => 'success']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => $conn->error]);
+    }
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Token data not found']);
 }
 
 $conn->close();
