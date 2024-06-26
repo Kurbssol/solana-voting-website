@@ -6,7 +6,7 @@
     <title>Solana Meme Coin List</title>
 	<style>
         table {
-            width: 50%;
+            width: 70%;
             margin: auto;
             border-collapse: collapse;
         }
@@ -21,6 +21,16 @@
         button {
             padding: 5px 10px;
             cursor: pointer;
+        }
+        #formContainer {
+            width: 70%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
         }
     </style>
     <link rel="stylesheet" href="styles.css">
@@ -48,11 +58,17 @@
 	<center>
     <main>
         <h1 style="text-align:center;">Vote for Your Favorite Solana Meme Coin</h1>
+    <div id="formContainer">
+        <input type="text" id="contractAddress" placeholder="Enter Solana Meme Coin Contract Address">
+        <button onclick="submitContract()">Submit</button>
+    </div>
     <table id="rankingTable">
         <thead>
             <tr>
                 <th>Rank</th>
                 <th>Coin</th>
+                <th>Symbol</th>
+                <th>Price</th>
                 <th>Votes</th>
                 <th>Action</th>
             </tr>
@@ -73,6 +89,8 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td>${coin.name}</td>
+                        <td>${coin.symbol}</td>
+                        <td>${coin.price}</td>
                         <td>${coin.votes}</td>
                         <td><button onclick="vote(${coin.id})">Vote</button></td>
                     </tr>
@@ -82,6 +100,19 @@
 
         async function vote(id) {
             await fetch('vote.php?id=' + id);
+            loadCoins();
+        }
+
+        async function submitContract() {
+            const contractAddress = document.getElementById('contractAddress').value;
+            await fetch('submit_contract.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ contract_address: contractAddress }),
+            });
+            document.getElementById('contractAddress').value = '';
             loadCoins();
         }
 
