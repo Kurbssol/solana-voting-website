@@ -28,33 +28,45 @@
     </header>
 	<center>
     <main>
-        <h2>All Solana Meme Coins</h2>
-                <p>Vote for your favorite Solana meme coins below:</p>
-				</center>
-                <div class="vote-box">
-                    <!-- Example voting options -->
-                    <div class="coin">
-                        <h3>Coin Name 1</h3>
-                        <button>Vote</button>
-                    </div>
-                    <div class="coin">
-                        <h3>Coin Name 2</h3>
-                        <button>Vote</button>
-                    </div>
-					<div class="coin">
-                        <h3>Coin Name 1</h3>
-                        <button>Vote</button>
-                    </div>
-					<div class="coin">
-                        <h3>Coin Name 1</h3>
-                        <button>Vote</button>
-                    </div>
-                    <!-- Add more coins as needed -->
-                </div>
-            </div>
-			</div>
-        </section>
-    </main>
-    </main>
+        <h1 style="text-align:center;">Vote for Your Favorite Solana Meme Coin</h1>
+    <table id="rankingTable">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Coin</th>
+                <th>Votes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="coinList">
+            <!-- Data will be loaded here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        async function loadCoins() {
+            const response = await fetch('get_coins.php');
+            const coins = await response.json();
+            const coinList = document.getElementById('coinList');
+            coinList.innerHTML = '';
+            coins.forEach((coin, index) => {
+                coinList.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${coin.name}</td>
+                        <td>${coin.votes}</td>
+                        <td><button onclick="vote(${coin.id})">Vote</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function vote(id) {
+            await fetch('vote.php?id=' + id);
+            loadCoins();
+        }
+
+        loadCoins();
+    </script>
 </body>
 </html>
