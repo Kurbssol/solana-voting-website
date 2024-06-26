@@ -47,7 +47,8 @@
     </header>
 	<center>
     <main>
-        <h1 style="text-align:center;">Vote for Your Favorite Solana Meme Coin</h1>
+        <body>
+    <h1 style="text-align:center;">Vote for Your Favorite Solana Meme Coin</h1>
     <div id="formContainer">
         <input type="text" id="contractAddress" placeholder="Enter Solana Meme Coin Contract Address">
         <button onclick="submitContract()">Submit</button>
@@ -95,15 +96,19 @@
 
         async function submitContract() {
             const contractAddress = document.getElementById('contractAddress').value;
-            await fetch('submit_contract.php', {
+            const response = await fetch('submit_contract.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ contract_address: contractAddress }),
             });
+            if (response.ok) {
+                loadCoins();
+            } else {
+                alert('Failed to add the coin. Please check the contract address.');
+            }
             document.getElementById('contractAddress').value = '';
-            loadCoins();
         }
 
         loadCoins();
